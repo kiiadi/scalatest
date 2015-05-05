@@ -770,4 +770,14 @@ class AccumulationSpec extends UnitSpec with Accumulation with TypeCheckedTriple
     gimme22("abcdefghijklmnopqrstuv", 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v') shouldBe Good(X22(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1))
     gimme22("z", 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v') shouldBe Bad(Every('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v'))
   }
+
+  it can "flatten an Or with the same Bad nested" in {
+    val shouldBeGood = parseDate("1992-10-10").map(_ => parseOptionalName(Some("Bob"))).flatten
+    val shouldBeBadDate = parseDate("1992-?-10").map(_ => parseOptionalName(Some("Bob"))).flatten
+    val shouldBeBadName = parseDate("1992-10-10").map(_ => parseOptionalName(None)).flatten
+
+    shouldBeGood shouldBe Good("Bob")
+    shouldBeBadDate shouldBe Bad(One("Can't parse [1992-?-10] as a date"))
+    shouldBeBadName shouldBe Bad(One("No name found"))
+  }
 }

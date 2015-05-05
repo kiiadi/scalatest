@@ -1574,6 +1574,13 @@ trait Accumulation {
     fn: (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V) => RESULT
   ): RESULT Or Every[ERR] = withGoodCurried(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v)(fn.curried)
 
+  implicit class NestedOr[G, B](nested: Or[Or[G, B], B]) {
+    def flatten: Or[G, B] = nested match {
+      case Good(inner) => inner
+      case Bad(outerBad) => Bad(outerBad)
+    }
+  }
+
   private def withGoodCurried[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, ERR, RESULT](
     a: A Or Every[ERR],
     b: B Or Every[ERR],
@@ -1748,5 +1755,6 @@ object Accumulation extends Accumulation {
      */
     def when[OTHERERR >: ERR](validations: (G => Validation[OTHERERR])*): G Or Every[OTHERERR]
   }
+
 }
 
