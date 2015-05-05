@@ -1574,6 +1574,15 @@ trait Accumulation {
     fn: (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V) => RESULT
   ): RESULT Or Every[ERR] = withGoodCurried(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v)(fn.curried)
 
+  /**
+   * Given a nested <code>Or<code> with the same Bad type <em>i.e.</em> <code> Or[Or[String, Every[ErrorMessage]\], Every[ErrorMessage]\] <code>
+   * add a <code>flatten<code> method that returns <code>Or[String, Every[ErrorMessage]\]<code>
+   * <p>
+   * For more information and examples, see the <a href="Or.html#accumulatingErrors">Accumulating errors with <code>Or</code></a> section
+   * of the main documentation for class <code>Or</code>.
+   * </p>
+   *
+   */
   implicit class NestedOr[G, B](nested: Or[Or[G, B], B]) {
     def flatten: Or[G, B] = nested match {
       case Good(inner) => inner
